@@ -7,8 +7,8 @@ use \GuzzleHttp\Cookie\CookieJar;
 
 class ServiceChecker
 {
-    protected Client $client;
-    protected CookieJar $cookies;
+    protected $client;
+    protected $cookies;
 
     public function __construct() {
         $this->cookies = new CookieJar();
