@@ -1,0 +1,21 @@
+{
+  "name": "r00d1k/instasaved-notifier",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "r00d1k",
+      "email": "alexander.e.rudenko@gmail.com"
+    }
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "^7.0",
+    "vlucas/phpdotenv": "^5.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Instasaved\\" : "src/"
+    }
+  }
+}
