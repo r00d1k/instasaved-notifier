@@ -2,8 +2,9 @@
 
 namespace Instasaved;
 
-use \GuzzleHttp\Client;
-use \GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use Psr\Http\Message\ResponseInterface;
 
 class ServiceChecker
 {
@@ -23,13 +24,13 @@ class ServiceChecker
     }
 
     public function isDown() {
-        $options = $this->prepareRequestOptions();
+        $options = $this->prepareRequestOptions($this->client->get(self::SERVICE_BASE_URL));
         $json = $this->checkService($options);
-        if ($json->type == 'userNotFound') {
-            return true;
+        $result = ($json->type == 'userNotFound');
+        if (!$result) {
+            Log::debug('JSON', [$json->type]);
         }
-        Log::debug('JSON', [$json->type]);
-        return false;
+        return $result;
     }
 
     /**
@@ -49,16 +50,15 @@ class ServiceChecker
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function prepareRequestOptions(): array
+    protected function prepareRequestOptions(ResponseInterface $response): array
     {
-        $options = [];
-
-        $response = $this->client->get(self::SERVICE_BASE_URL);
         $x_xsrf_token = $this->fetchXsrfTokenFromCookie();
         $token = $this->fetchFormToken($response);
 
-        $options['headers'] = ['X-XSRF-TOKEN' => $x_xsrf_token];
-        $options['json'] = ['token' => $token, 'type' => 'story', 'username' => self::INSTAGRAM_USER_URL];
+        $options = [
+            'headers'   => [ 'X-XSRF-TOKEN' => $x_xsrf_token ],
+            'json'      => [ 'token' => $token, 'type' => 'story', 'username' => self::INSTAGRAM_USER_URL ],
+        ];
 
         return $options;
     }
