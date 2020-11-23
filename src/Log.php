@@ -21,6 +21,7 @@ class Log
                 new StreamHandler(getenv('MONOLOG_FILE') . '.alert', Logger::ALERT),
             ];
             $log = new Logger('Instasaved', $handlers);
+            $log->useMicrosecondTimestamps(false);
             self::$logger = $log;
         }
         return self::$logger;
