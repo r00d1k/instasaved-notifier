@@ -7,13 +7,17 @@ use \GuzzleHttp\Cookie\CookieJar;
 
 class ServiceChecker
 {
+    const SERVICE_BASE_URL = 'https://test.instasaved.net';
+    const SERVICE_AJAX_URL = 'https://test.instasaved.net/ajax-instasaver';
+    const INSTAGRAM_USER_URL = 'https://instagram.com/jlo';
+
     protected Client $client;
     protected CookieJar $cookies;
 
     public function __construct() {
         $this->cookies = new CookieJar();
         $this->client = new Client([
-            'base_uri' => 'https://test.instasaved.net',
+            'base_uri' => self::SERVICE_BASE_URL,
             'cookies' => $this->cookies,
         ]);
     }
@@ -35,7 +39,7 @@ class ServiceChecker
      */
     protected function checkService(array $options): \stdClass
     {
-        $data = $this->client->request('POST', 'https://test.instasaved.net/ajax-instasaver', $options)
+        $data = $this->client->request('POST', self::SERVICE_AJAX_URL, $options)
             ->getBody()
             ->getContents();
         return \json_decode($data);
@@ -49,12 +53,12 @@ class ServiceChecker
     {
         $options = [];
 
-        $response = $this->client->get('https://test.instasaved.net');
+        $response = $this->client->get(self::SERVICE_BASE_URL);
         $x_xsrf_token = $this->fetchXsrfTokenFromCookie();
         $token = $this->fetchFormToken($response);
 
         $options['headers'] = ['X-XSRF-TOKEN' => $x_xsrf_token];
-        $options['json'] = ['token' => $token, 'type' => 'story', 'username' => 'https://instagram.com/jlo'];
+        $options['json'] = ['token' => $token, 'type' => 'story', 'username' => self::INSTAGRAM_USER_URL];
 
         return $options;
     }
