@@ -1,16 +1,24 @@
 <?php
+use Instasaved\Log;
+use Instasaved\ServiceChecker;
+use Instasaved\TelegramBotSender;
+
 require 'vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 try {
-    $checker = new Instasaved\ServiceChecker();
+    $checker = new ServiceChecker();
     if ($checker->isDown()) {
-        $chatId = getenv('TELEGRAM_CHAT_ID');
+        Log::alert('Service is down');
         $token = getenv('TELEGRAM_BOT_TOKEN');
-        $sender = new Instasaved\TelegramBotSender($token);
-        $sender->send($chatId, 'Service is down');
+        $chatId = getenv('TELEGRAM_CHAT_ID');
+        (new TelegramBotSender($token))->send($chatId, 'Service is down')
+            ? Log::alert('Message sent')
+            : Log::emergency('Message was not send');
+    } else {
+        Log::info('Service is working');
     }
 } catch (Exception $e) {
-    echo $e->getMessage() . "\n";
+    Log::emergency($e->getMessage());
 }

@@ -20,22 +20,25 @@ class ServiceChecker
 
     public function isDown() {
         $options = $this->prepareRequestOptions();
-        return $this->checkService($options);
+        $json = $this->checkService($options);
+        if ($json->type == 'userNotFound') {
+            return true;
+        }
+        Log::debug('JSON', [$json->type]);
+        return false;
     }
 
     /**
      * @param array $options
-     * @return bool
+     * @return \stdClass
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function checkService(array $options): bool
+    protected function checkService(array $options): \stdClass
     {
         $data = $this->client->request('POST', 'https://test.instasaved.net/ajax-instasaver', $options)
             ->getBody()
             ->getContents();
-        $json = json_decode($data);
-        return ($json->type == 'userNotFound');
-        //        isset($json->error)
+        return \json_decode($data);
     }
 
     /**
