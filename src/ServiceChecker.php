@@ -8,8 +8,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class ServiceChecker
 {
-    const SERVICE_BASE_URL = 'https://test.instasaved.net';
-    const SERVICE_AJAX_URL = 'https://test.instasaved.net/ajax-instasaver';
+    const SERVICE_BASE_URL = 'https://instasaved.net';
+    const SERVICE_AJAX_URL = 'https://instasaved.net/ajax-instasaver';
     const INSTAGRAM_USER_URL = 'https://instagram.com/jlo';
 
     protected Client $client;
